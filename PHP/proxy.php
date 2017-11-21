@@ -630,7 +630,17 @@ class Proxy {
 
         try {
 
-            if (!empty($_POST) && empty($_FILES)) { // Is it a POST without files?
+          if($_SERVER["CONTENT_TYPE"] == 'text/xml') { // IS it a POST with Content-Type: text/xml ?
+
+            $this->proxyLog->log('XML POST detected');
+
+            $this->proxyUrl = $_SERVER['QUERY_STRING'];
+
+            $this->proxyData = file_get_contents("php://input");
+
+            $this->proxyMethod = "XML";
+
+          } else if (!empty($_POST) && empty($_FILES)) { // Is it a POST without files?
 
                 $this->proxyLog->log('POST detected');
 
