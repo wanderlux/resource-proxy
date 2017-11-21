@@ -871,6 +871,8 @@ class Proxy {
 
             $this->proxyGet();
 
+        }else if($this->proxyMethod == "XML"){
+            $this->proxyXml();
         }
 
         //Check the response to see if any error occurs
@@ -1150,7 +1152,7 @@ class Proxy {
 
         return;
     }
-    
+
     public function proxyPost($url, $params)
     {
         $this->response = null;
