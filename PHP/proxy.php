@@ -1092,6 +1092,65 @@ class Proxy {
         return;
     }
 
+    public function proxyXml($url, $params) {
+
+        $this->response = null;
+
+        $this->headers = null;
+
+        $this->proxyBody = null;
+
+        if(empty($url) || is_null($url) || empty($params) || $url === $params){ //If no $url or $params passed, default to class property values
+
+            $url = $this->proxyUrl;
+
+            $params = $this->proxyData;
+
+        }
+
+        try {
+
+            $this->initCurl();
+
+            curl_setopt($this->ch, CURLOPT_URL, $url);
+
+            curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
+
+            curl_setopt($this->ch, CURLOPT_POST, true);
+
+            curl_setopt($this->ch, CURLOPT_POSTFIELDS, $params);
+
+            curl_setopt($this->ch, CURLOPT_HTTPHEADER,     array('Content-Type: text/xml'));
+
+            $this->response = curl_exec($this->ch);
+
+            $this->responseClone = $this->response;
+
+            $this->contentLength = curl_getinfo($this->ch,CURLINFO_HEADER_SIZE);
+
+        } catch (Exception $e) {
+
+            $this->proxyLog->log($e->getMessage());
+        }
+
+        if(curl_errno($this->ch) > 0 || empty($this->response))
+        {
+            $this->curlError();
+
+        }else{
+
+            $this->setProxyHeaders();
+
+            $this->setResponseBody();
+        }
+
+        curl_close($this->ch);
+
+        $this->ch = null;
+
+        return;
+    }
+    
     public function proxyPost($url, $params)
     {
         $this->response = null;
